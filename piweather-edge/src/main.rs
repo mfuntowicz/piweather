@@ -13,6 +13,14 @@ use tracing::{error, info, instrument};
 pub struct PiWeather {
     #[structopt(short, long)]
     verbose: bool,
+
+    #[structopt(
+        short,
+        long,
+        help = "Interval between two readouts (in seconds), default = 10min (600s)",
+        default_value = "600"
+    )]
+    interval: usize,
 }
 
 #[instrument]
@@ -38,7 +46,7 @@ fn main() -> Result<()> {
     // Setup logging
     setup_logging(match piweather.verbose {
         true => tracing::Level::DEBUG,
-        false => tracing::Level::TRACE,
+        false => tracing::Level::INFO,
     });
 
     let transmitter = PiWeatherHttpTransmitter::default();
@@ -47,7 +55,11 @@ fn main() -> Result<()> {
     let terminated = register_sigterm_hook()?;
 
     info!("Creating PiWeatherEngine");
-    let mut engine = PiWeatherEngine::new(Duration::from_millis(500), terminated, transmitter);
+    let mut engine = PiWeatherEngine::new(
+        Duration::from_secs(piweather.interval as u64),
+        terminated,
+        transmitter,
+    );
     engine.register_sensor(DummySensor::new());
     engine.run()?;
 

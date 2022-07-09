@@ -1,5 +1,5 @@
 use crate::transmitters::http::PiWeatherHttpTransmitter;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use piweather_commons::{Readout, Sensor};
 use smallvec::SmallVec;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -62,9 +62,10 @@ impl PiWeatherEngine {
                 .flatten()
                 .collect();
 
-            // for sensor in &mut self.sensors {}
-            println!("Readouts {:?}", readouts);
-            self.transmitter.send(&readouts);
+            let _ = self
+                .transmitter
+                .send(&readouts)
+                .map_err(|err| anyhow!(err))?;
 
             let duration = Instant::now() - start;
             debug!("Engine about to sleep (loop: {:?})", duration);
