@@ -2,12 +2,12 @@ use piweather_commons::{PiWeatherError, Readout, ReadoutKind, Sensor};
 use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
 use smallvec::{smallvec, SmallVec};
-use std::time::Instant;
+use std::fmt::{Debug, Display, Formatter};
 use tracing::{debug, instrument};
 
 const SENSOR_NAME: &'static str = "dummy";
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct DummySensor {
     rng: ThreadRng,
 }
@@ -19,6 +19,7 @@ impl DummySensor {
 }
 
 impl Sensor for DummySensor {
+    #[inline]
     fn name(&self) -> &'static str {
         SENSOR_NAME
     }
@@ -30,5 +31,17 @@ impl Sensor for DummySensor {
             ReadoutKind::Temperature,
             self.rng.gen()
         )]))
+    }
+}
+
+impl Display for DummySensor {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name())
+    }
+}
+
+impl Debug for DummySensor {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("DummySensor").finish()
     }
 }

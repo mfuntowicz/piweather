@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-flume = "0.10"
 piweather-commons = { path = "../piweather-commons" }
 rand = "0.8"
 smallvec = { version = "1.9", features = ["serde"] }

@@ -44,7 +44,7 @@ fn main() -> Result<()> {
     let terminated = register_sigterm_hook()?;
 
     info!("Creating PiWeatherEngine");
-    let mut engine = PiWeatherEngine::new(Duration::from_millis(500), 16, terminated);
+    let mut engine = PiWeatherEngine::new(Duration::from_millis(500), terminated);
     engine.register_sensor(DummySensor::new());
     engine.run()?;
 
