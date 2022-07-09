@@ -1,23 +1,31 @@
+use crate::transmitters::http::PiWeatherHttpTransmitter;
 use anyhow::Result;
-use piweather_commons::Sensor;
+use piweather_commons::{Readout, Sensor};
+use smallvec::SmallVec;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Instant;
-use std::{fmt::Debug, time::Duration};
+use std::{fmt::Debug, thread, time::Duration};
 use tracing::{debug, error, info, instrument};
 
 pub struct PiWeatherEngine {
     interval: Duration,
     terminated: Arc<AtomicBool>,
+    transmitter: PiWeatherHttpTransmitter,
     sensors: Vec<Box<dyn Sensor>>,
 }
 
 impl PiWeatherEngine {
-    pub fn new(interval: Duration, terminated: Arc<AtomicBool>) -> Self {
+    pub fn new(
+        interval: Duration,
+        terminated: Arc<AtomicBool>,
+        transmitter: PiWeatherHttpTransmitter,
+    ) -> Self {
         Self {
             interval,
             terminated,
+            transmitter,
             sensors: Vec::new(),
         }
     }
@@ -38,12 +46,25 @@ impl PiWeatherEngine {
             debug!("Engine tick");
             let start = Instant::now();
 
-            for sensor in &mut self.sensors {
-                match sensor.read() {
-                    Ok(readouts) => info!("Reading sensor {}: {:?}", sensor, readouts),
-                    Err(err) => error!("Caught error while reading sensor {}: {}", sensor, err),
-                }
-            }
+            let readouts: Vec<Readout> = self
+                .sensors
+                .iter_mut()
+                .filter_map(|sensor| match sensor.read() {
+                    Ok(readouts) => {
+                        info!("Read sensor {}: {:?}", sensor, readouts);
+                        readouts
+                    }
+                    Err(err) => {
+                        error!("Caught error while reading sensor {}: {}", sensor, err);
+                        None
+                    }
+                })
+                .flatten()
+                .collect();
+
+            // for sensor in &mut self.sensors {}
+            println!("Readouts {:?}", readouts);
+            self.transmitter.send(&readouts);
 
             let duration = Instant::now() - start;
             debug!("Engine about to sleep (loop: {:?})", duration);

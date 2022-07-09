@@ -1,4 +1,5 @@
 use anyhow::{anyhow, Result};
+use piweather_edge::transmitters::http::PiWeatherHttpTransmitter;
 use piweather_edge::{sensors::DummySensor, utils::setup_logging, PiWeatherEngine};
 use signal_hook::{consts::SIGINT, flag::register};
 use std::sync::atomic::AtomicBool;
@@ -40,11 +41,13 @@ fn main() -> Result<()> {
         false => tracing::Level::TRACE,
     });
 
+    let transmitter = PiWeatherHttpTransmitter::default();
+
     info!("Starting PiWeather.");
     let terminated = register_sigterm_hook()?;
 
     info!("Creating PiWeatherEngine");
-    let mut engine = PiWeatherEngine::new(Duration::from_millis(500), terminated);
+    let mut engine = PiWeatherEngine::new(Duration::from_millis(500), terminated, transmitter);
     engine.register_sensor(DummySensor::new());
     engine.run()?;
 

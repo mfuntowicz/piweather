@@ -9,6 +9,7 @@ edition = "2021"
 anyhow = "1.0"
 piweather-commons = { path = "../piweather-commons" }
 rand = "0.8"
+reqwest = { version = "0.11", features = ["blocking", "serde_json", "json", "rustls-native-certs"] }
 smallvec = { version = "1.9", features = ["serde"] }
 signal-hook = "0.3"
 structopt = "0.3"
