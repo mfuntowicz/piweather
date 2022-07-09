@@ -2,6 +2,7 @@ use anyhow::Result;
 use flume::{bounded, Receiver, Sender};
 use piweather_commons::{PiWeatherError, Readout, Sensor};
 use smallvec::SmallVec;
+use std::fmt::{Display, Formatter};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread::{sleep, yield_now};
@@ -20,6 +21,20 @@ pub struct PiWeatherSensorPipe {
 impl PiWeatherSensorPipe {
     pub fn new(sensor: Box<dyn Sensor>, sender: Sender<Readout>) -> Self {
         Self { sender, sensor }
+    }
+}
+
+impl Debug for PiWeatherSensorPipe {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PiWeatherSensorPipe")
+            .field("sensor", &self.sensor.name())
+            .finish()
+    }
+}
+
+impl Display for PiWeatherSensorPipe {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{}", self.sensor.name())
     }
 }
 
@@ -64,8 +79,8 @@ impl PiWeatherEngine {
 
             for mut sensor in &mut self.sensors {
                 match sensor.sensor.read() {
-                    Ok(readouts) => info!("Reading sensor: {:?}", readouts),
-                    Err(err) => error!("Caught error while reading: {}", err),
+                    Ok(readouts) => info!("Reading sensor {}: {:?}", sensor, readouts),
+                    Err(err) => error!("Caught error while reading sensor {}: {}", sensor, err),
                 }
             }
 
@@ -83,7 +98,7 @@ impl Debug for PiWeatherEngine {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("PiWeatherEngine")
             .field("interval", &self.interval)
-            // .field("sensors", &self.sensors)
+            .field("sensors", &self.sensors)
             .finish()
     }
 }

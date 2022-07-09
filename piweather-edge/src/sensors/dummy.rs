@@ -5,6 +5,8 @@ use smallvec::{smallvec, SmallVec};
 use std::time::Instant;
 use tracing::{debug, instrument};
 
+const SENSOR_NAME: &'static str = "dummy";
+
 #[derive(Debug, Clone)]
 pub struct DummySensor {
     rng: ThreadRng,
@@ -17,6 +19,10 @@ impl DummySensor {
 }
 
 impl Sensor for DummySensor {
+    fn name(&self) -> &'static str {
+        SENSOR_NAME
+    }
+
     #[instrument]
     fn read(&mut self) -> Result<Option<SmallVec<[Readout; 4]>>, PiWeatherError> {
         debug!("Reading from DummySensor");
