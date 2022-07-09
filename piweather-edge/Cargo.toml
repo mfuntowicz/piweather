@@ -1,0 +1,17 @@
+[package]
+name = "piweather-edge"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0"
+flume = "0.10"
+piweather-commons = { path = "../piweather-commons" }
+rand = "0.8"
+smallvec = { version = "1.9", features = ["serde"] }
+signal-hook = "0.3"
+structopt = "0.3"
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = {version = "0.3", features = ["json", "env-filter"]}

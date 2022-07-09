@@ -1,6 +1,6 @@
 # Rust
-/target
-piweather-edge/Cargo.lock
+target/
+Cargo.lock
 
 # IDE
 .vscode
