@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
+gpio-cdev = { version = "0.5", optional = true }
 piweather-commons = { path = "../piweather-commons" }
 rand = "0.8"
 reqwest = { version = "0.11", features = ["blocking", "serde_json", "json", "rustls-native-certs"] }
@@ -15,3 +16,8 @@ signal-hook = "0.3"
 structopt = "0.3"
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = {version = "0.3", features = ["json", "env-filter"]}
+
+
+[features]
+gpio = ["gpio-cdev"]
+am2315 = ["gpio"]
