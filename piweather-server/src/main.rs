@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
             "/readouts",
             put().to(|readouts: Json<Vec<Readout>>| async move {
                 println!("Received readouts: {:?}", readouts);
-                HttpResponse::Ok()
+                HttpResponse::Ok().await
             }),
         )
     })

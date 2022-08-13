@@ -57,8 +57,7 @@ impl PiWeatherEngine {
                 .flatten()
                 .collect();
 
-            let _ = self
-                .transmitter
+            self.transmitter
                 .send(&readouts)
                 .map_err(|err| anyhow!(err))?;
 

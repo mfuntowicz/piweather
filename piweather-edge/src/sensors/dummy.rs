@@ -5,7 +5,7 @@ use smallvec::{smallvec, SmallVec};
 use std::fmt::{Debug, Display, Formatter};
 use tracing::{debug, instrument};
 
-const SENSOR_NAME: &'static str = "dummy";
+const SENSOR_NAME: &str = "dummy";
 
 #[derive(Clone)]
 pub struct DummySensor {
@@ -31,6 +31,13 @@ impl Sensor for DummySensor {
             ReadoutKind::Temperature,
             self.rng.gen()
         )]))
+    }
+}
+
+impl Default for DummySensor {
+    #[inline]
+    fn default() -> Self {
+        DummySensor::new()
     }
 }
 
