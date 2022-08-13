@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use piweather_commons::{PiWeatherError, Readout};
 use reqwest::blocking::Client;
-use reqwest::{StatusCode, Url};
+use reqwest::Url;
 use std::fmt::{Debug, Formatter};
 use tracing::instrument;
 

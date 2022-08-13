@@ -11,7 +11,7 @@ pub enum PiWeatherSensor {
 impl Display for PiWeatherSensor {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PiWeatherSensor::Dummy(sensor) => writeln!(f, "{}", &sensor),
+            PiWeatherSensor::Dummy(sensor) => write!(f, "{}", &sensor),
         }
     }
 }

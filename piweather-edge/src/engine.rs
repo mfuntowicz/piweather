@@ -1,13 +1,13 @@
 use crate::sensors::PiWeatherSensor;
 use crate::transmitters::http::PiWeatherHttpTransmitter;
 use anyhow::{anyhow, Result};
-use piweather_commons::{Readout, Sensor};
+use piweather_commons::Readout;
 use std::ops::Add;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread::{sleep, yield_now};
 use std::time::Instant;
-use std::{fmt::Debug, thread, time::Duration};
+use std::{fmt::Debug, time::Duration};
 use tracing::{debug, error, info, instrument};
 
 pub struct PiWeatherEngine {
