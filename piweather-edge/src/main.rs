@@ -60,7 +60,7 @@ fn main() -> Result<()> {
         terminated,
         transmitter,
     );
-    engine.register_sensor(DummySensor::new());
+    engine.register_sensor(DummySensor::new().into());
     engine.run()?;
 
     info!("PiWeather is shutting down.");

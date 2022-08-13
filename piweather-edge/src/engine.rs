@@ -1,10 +1,11 @@
+use crate::sensors::PiWeatherSensor;
 use crate::transmitters::http::PiWeatherHttpTransmitter;
 use anyhow::{anyhow, Result};
 use piweather_commons::{Readout, Sensor};
-use smallvec::SmallVec;
+use std::ops::Add;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::thread::sleep;
+use std::thread::{sleep, yield_now};
 use std::time::Instant;
 use std::{fmt::Debug, thread, time::Duration};
 use tracing::{debug, error, info, instrument};
@@ -13,7 +14,7 @@ pub struct PiWeatherEngine {
     interval: Duration,
     terminated: Arc<AtomicBool>,
     transmitter: PiWeatherHttpTransmitter,
-    sensors: Vec<Box<dyn Sensor>>,
+    sensors: Vec<PiWeatherSensor>,
 }
 
 impl PiWeatherEngine {
@@ -31,12 +32,9 @@ impl PiWeatherEngine {
     }
 
     #[instrument]
-    pub fn register_sensor<T>(&mut self, sensor: T)
-    where
-        T: 'static + Sensor + Debug,
-    {
-        info!("Registering sensor {:?}", sensor);
-        self.sensors.push(Box::new(sensor));
+    pub fn register_sensor(&mut self, sensor: PiWeatherSensor) {
+        info!("Registering sensor {}", sensor);
+        self.sensors.push(sensor);
     }
 
     pub fn run(&mut self) -> Result<()> {
@@ -50,10 +48,7 @@ impl PiWeatherEngine {
                 .sensors
                 .iter_mut()
                 .filter_map(|sensor| match sensor.read() {
-                    Ok(readouts) => {
-                        info!("Read sensor {}: {:?}", sensor, readouts);
-                        readouts
-                    }
+                    Ok(readouts) => readouts,
                     Err(err) => {
                         error!("Caught error while reading sensor {}: {}", sensor, err);
                         None
@@ -69,6 +64,11 @@ impl PiWeatherEngine {
 
             let duration = Instant::now() - start;
             debug!("Engine about to sleep (loop: {:?})", duration);
+
+            let awake = Instant::now().add(self.interval);
+            while Instant::now() <= awake {
+                yield_now()
+            }
             sleep(self.interval);
         }
 
