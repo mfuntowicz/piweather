@@ -31,5 +31,11 @@ impl From<DummySensor> for PiWeatherSensor {
     }
 }
 
+#[cfg(feature = "am2315")]
+mod am2315;
+
+#[cfg(feature = "am2315")]
+pub use am2315::*;
+
 mod dummy;
 pub use dummy::*;
