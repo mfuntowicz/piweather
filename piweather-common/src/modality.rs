@@ -14,6 +14,16 @@ pub enum Temperature {
 }
 
 impl Temperature {
+    /// Convert `Temperature::Fahrenheit` to `Temperature::Celsius.
+    /// If the temperature is already expressed in Celsius, the returned value is the same
+    ///
+    /// ```
+    /// use piweather_common::Temperature;
+    ///
+    /// let ft = Temperature::Fahrenheit(0.0);
+    /// let ct = ft.to_celsius();
+    /// assert_eq!(ct, Temperature::Celsius(-17.777779))
+    /// ```
     pub fn to_celsius(&self) -> Self {
         match self {
             Temperature::Celsius(temp) => Temperature::Celsius(*temp),
@@ -21,6 +31,16 @@ impl Temperature {
         }
     }
 
+    /// Convert `Temperature::Celsius` to `Temperature::Fahrenheit.
+    /// If the temperature is already expressed in Fahrenheit, the returned value is the same
+    ///
+    /// ```
+    /// use piweather_common::Temperature;
+    ///
+    /// let ct = Temperature::Celsius(0.0);
+    /// let ft = ct.to_fahrenheit();
+    /// assert_eq!(ft, Temperature::Fahrenheit(32.0))
+    /// ```
     pub fn to_fahrenheit(&self) -> Self {
         match self {
             Temperature::Celsius(temp) => Temperature::Fahrenheit(temp * 1.8 + 32.0),
@@ -41,7 +61,45 @@ mod tests {
     use crate::modality::Temperature;
 
     #[test]
-    fn temperature_celius_to_fahrenheit() {
+    fn temperature_celsius_to_celsius() {
+        assert_eq!(
+            Temperature::Celsius(10.5).to_celsius(),
+            Temperature::Celsius(10.5)
+        );
+        assert_eq!(
+            Temperature::Celsius(0.0).to_celsius(),
+            Temperature::Celsius(0.0)
+        );
+
+        assert_eq!(
+            Temperature::Celsius(-19.3).to_celsius(),
+            Temperature::Celsius(-19.3)
+        );
+    }
+
+    #[test]
+    fn temperature_fahrenheit_to_fahrenheit() {
+        assert_eq!(
+            Temperature::Fahrenheit(10.5).to_fahrenheit(),
+            Temperature::Fahrenheit(10.5)
+        );
+        assert_eq!(
+            Temperature::Fahrenheit(0.0).to_fahrenheit(),
+            Temperature::Fahrenheit(0.0)
+        );
+
+        assert_eq!(
+            Temperature::Fahrenheit(-19.3).to_fahrenheit(),
+            Temperature::Fahrenheit(-19.3)
+        );
+    }
+
+    #[test]
+    fn temperature_celsius_to_fahrenheit() {
+        assert_eq!(
+            Temperature::Fahrenheit(-40.0).to_celsius(),
+            Temperature::Celsius(-40.0),
+        );
         assert_eq!(
             Temperature::Fahrenheit(50.0).to_celsius(),
             Temperature::Celsius(10.0)
@@ -50,6 +108,10 @@ mod tests {
 
     #[test]
     fn temperature_fahrenheit_to_celsius() {
+        assert_eq!(
+            Temperature::Celsius(-40.0).to_fahrenheit(),
+            Temperature::Fahrenheit(-40.0)
+        );
         assert_eq!(
             Temperature::Celsius(9.9).to_fahrenheit(),
             Temperature::Fahrenheit(49.82)
