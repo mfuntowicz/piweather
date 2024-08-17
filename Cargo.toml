@@ -12,4 +12,5 @@ authors = ["Morgan Funtowicz"]
 homepage = "https://github.com/mfuntowicz/piweather"
 
 [workspace.dependencies]
+tracing = { version = "0.1" }
 serde = { version = "1.0" }
