@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+    "piweather-agent",
+    "piweather-common"
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+authors = ["Morgan Funtowicz"]
+homepage = "https://github.com/mfuntowicz/piweather"
+
+[workspace.dependencies]
+serde = { version = "1.0" }

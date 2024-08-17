@@ -1,0 +1,10 @@
+[package]
+edition = "2021"
+name = "piweather-agent"
+version = { workspace = true }
+authors = ["Morgan Funtowicz"]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+piweather-common = { path = "../piweather-common" }
+serde = { workspace = true }

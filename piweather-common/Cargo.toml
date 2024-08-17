@@ -1,0 +1,12 @@
+[package]
+edition = "2021"
+name = "piweather-common"
+version = { workspace = true }
+authors = ["Morgan Funtowicz"]
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+
+
+[dev-dependencies]
+approx = "0.5"
