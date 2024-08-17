@@ -32,3 +32,6 @@ jobs:
 
       - name: Run tests
         run: cargo test --verbose
+
+      - name: Run Doctests
+        run: cargo test --doc --verbose
