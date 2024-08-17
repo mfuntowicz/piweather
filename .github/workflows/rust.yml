@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: cargo registry cache
+      - name: Cargo Registry Cache
         uses: actions/cache@v4
         with:
           key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.toml') }}-${{ github.sha }}
@@ -29,6 +29,6 @@ jobs:
 
       - name: Build
         run: cargo build --verbose
-        
+
       - name: Run tests
         run: cargo test --verbose
