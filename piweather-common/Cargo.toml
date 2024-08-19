@@ -5,6 +5,8 @@ version = { workspace = true }
 authors = ["Morgan Funtowicz"]
 
 [dependencies]
+thiserror = "1.0"
+i2cdev = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 smallvec = { version = "2.0.0-alpha.7", features = ["serde"] }
 

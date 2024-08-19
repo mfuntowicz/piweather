@@ -6,6 +6,7 @@ authors = ["Morgan Funtowicz"]
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
+i2cdev = { workspace = true }
 piweather-common = { path = "../piweather-common" }
 serde = { workspace = true }
 tokio = { version = "1.39", features = ["macros", "parking_lot", "rt", "signal", "sync"] }
