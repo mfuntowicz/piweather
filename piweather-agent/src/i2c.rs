@@ -1,6 +1,5 @@
 use crate::i2c::linux::LinuxI2CDeviceFactory;
 use piweather_common::errors::PiWeatherError;
-use std::fmt::Display;
 use std::path::Path;
 
 pub trait I2CDeviceFactory {
