@@ -1,4 +1,3 @@
-use i2cdev::core::I2CDevice;
 use thiserror::Error;
 
 #[derive(Debug, Error)]

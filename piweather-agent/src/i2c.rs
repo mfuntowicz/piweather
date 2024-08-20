@@ -1,9 +1,10 @@
 use crate::i2c::linux::LinuxI2CDeviceFactory;
+use i2cdev::core::I2CDevice;
 use piweather_common::errors::PiWeatherError;
 use std::path::Path;
 
 pub trait I2CDeviceFactory {
-    type Device;
+    type Device: I2CDevice + Sized;
 
     /// Attempt to open the device at the specified address
     ///
