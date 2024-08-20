@@ -51,9 +51,10 @@ impl Temperature {
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub enum Modality {
+    Humidity(f32),
     Pressure(u16),
-    Wind(Wind),
     Temperature(Temperature),
+    Wind(Wind),
 }
 
 #[cfg(test)]
