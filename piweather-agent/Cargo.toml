@@ -5,6 +5,7 @@ version = { workspace = true }
 authors = ["Morgan Funtowicz"]
 
 [dependencies]
+byteorder = "1"
 clap = { version = "4.5", features = ["derive"] }
 i2cdev = { workspace = true }
 piweather-common = { path = "../piweather-common" }

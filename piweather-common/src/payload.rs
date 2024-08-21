@@ -1,19 +1,18 @@
 use crate::Modality;
-use smallvec::SmallVec;
 use std::time::Instant;
 
 #[derive(Debug)]
-pub struct Payload {
+pub struct Payload<const N: usize> {
     when: Instant,
-    readouts: SmallVec<Modality, 3>,
+    readouts: [Modality; N],
 }
 
-impl Payload {
-    pub fn new(when: Instant, readouts: SmallVec<Modality, 3>) -> Self {
+impl<const N: usize> Payload<N> {
+    pub fn new(when: Instant, readouts: [Modality; N]) -> Self {
         Self { when, readouts }
     }
 
-    pub fn now(readouts: SmallVec<Modality, 3>) -> Self {
+    pub fn now(readouts: [Modality; N]) -> Self {
         Self {
             when: Instant::now(),
             readouts,
