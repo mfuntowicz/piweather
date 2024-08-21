@@ -5,11 +5,12 @@ version = { workspace = true }
 authors = ["Morgan Funtowicz"]
 
 [dependencies]
-byteorder = "1"
 clap = { version = "4.5", features = ["derive"] }
 i2cdev = { workspace = true }
 piweather-common = { path = "../piweather-common" }
 serde = { workspace = true }
-#tokio = { version = "1.39", features = ["macros", "parking_lot", "rt", "signal", "sync", "time"] }
 tracing = { workspace = true, features = ["log"] }
 tracing-subscriber = { version = "0.3", features = ["fmt"] }
+
+[profile.release]
+lto = "thin"
