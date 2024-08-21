@@ -16,5 +16,5 @@ where
 
     ///
     ///
-    fn payload(&mut self) -> Result<Option<Payload<N>>, PiWeatherError>;
+    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError>;
 }

@@ -138,10 +138,10 @@ where
         Ok(Am2315::new(device))
     }
 
-    fn payload(&mut self) -> Result<Option<Payload<2>>, PiWeatherError> {
+    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError> {
         if let Some(readouts) = self.read()? {
             let modalities = [readouts[0].into(), readouts[1].into()];
-            return Ok(Some(Payload::now(modalities)));
+            return Ok(Some(Payload::now(&modalities)));
         }
 
         Ok(None)

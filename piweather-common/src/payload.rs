@@ -1,21 +1,23 @@
 use crate::Modality;
-use std::time::Instant;
+use chrono::{DateTime, TimeZone, Utc};
+use serde::{Deserialize, Serialize};
+use smallvec::SmallVec;
 
-#[derive(Debug)]
-pub struct Payload<const N: usize> {
-    when: Instant,
-    readouts: [Modality; N],
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Payload {
+    when: DateTime<Utc>,
+    readouts: SmallVec<Modality, 2>,
 }
 
-impl<const N: usize> Payload<N> {
-    pub fn new(when: Instant, readouts: [Modality; N]) -> Self {
-        Self { when, readouts }
+impl Payload {
+    pub fn new<TZ: TimeZone>(when: DateTime<TZ>, readouts: &[Modality]) -> Self {
+        Self {
+            when: when.to_utc(),
+            readouts: readouts.into(),
+        }
     }
 
-    pub fn now(readouts: [Modality; N]) -> Self {
-        Self {
-            when: Instant::now(),
-            readouts,
-        }
+    pub fn now(readouts: &[Modality]) -> Self {
+        Self::new(DateTime::<Utc>::default(), readouts)
     }
 }

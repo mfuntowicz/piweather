@@ -5,9 +5,11 @@ version = { workspace = true }
 authors = ["Morgan Funtowicz"]
 
 [dependencies]
+chrono = { workspace = true, features = ["serde"] }
 thiserror = "1.0"
 i2cdev = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+smallvec = { workspace = true, features = ["serde"] }
 
 [dev-dependencies]
 approx = "0.5"
