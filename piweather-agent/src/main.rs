@@ -44,7 +44,7 @@ fn weather_readouts_driver<T: I2CDeviceFactory>(
         match am2315.read() {
             Ok(readouts) => {
                 if let Some(readouts) = readouts {
-                    info!("Am2315: {:?}", &readouts);
+                    info!("{:?}", &readouts);
                     let modalities = [readouts[0].into(), readouts[1].into()];
                     if let Err(err) = pipe.send(Payload::now(&modalities)) {
                         error!(

@@ -121,6 +121,8 @@ where
     D: I2CDevice + Sized,
     Self: Sized,
 {
+    const NAME: &'static str = "AM2315";
+
     fn with_i2c_factory(factory: F) -> Result<Self, PiWeatherError> {
         let device = factory.open(AM2315_I2C_SLAVE_ADDRESS as u16)?;
         Ok(Am2315::new(device))

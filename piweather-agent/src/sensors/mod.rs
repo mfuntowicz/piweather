@@ -10,6 +10,8 @@ where
     T: I2CDeviceFactory<Device = D>,
     Self: Sized,
 {
+    const NAME: &'static str;
+
     ///
     fn with_i2c_factory(factory: T) -> Result<Self, PiWeatherError>;
 
