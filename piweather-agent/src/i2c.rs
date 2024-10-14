@@ -47,7 +47,7 @@ pub mod linux {
 
         #[inline]
         fn open(&self, address: u16) -> Result<Self::Device, PiWeatherError> {
-            LinuxI2CDevice::new(&self.fd.as_ref(), address)
+            LinuxI2CDevice::new(self.fd.as_ref(), address)
                 .map_err(|err| PiWeatherError::I2CError(err.to_string()))
         }
     }

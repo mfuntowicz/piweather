@@ -2,7 +2,7 @@ use crate::i2c::I2CDeviceFactory;
 use crate::sensors::Sensor;
 use i2cdev::core::I2CDevice;
 use piweather_common::errors::PiWeatherError;
-use piweather_common::{Modality, Particle};
+use piweather_common::{AirQuality, Modality, Particle};
 
 const PMSA003_I2C_SLAVE_ADDRESS: u16 = 0x12;
 
@@ -43,7 +43,14 @@ pub enum PmsA003Readout {
 
 impl From<PmsA003Readout> for Modality {
     fn from(value: PmsA003Readout) -> Self {
-        value.into()
+        match value {
+            PmsA003Readout::Concentration(particle, _, qty) => {
+                Modality::AirQuality(AirQuality::Concentration(particle.into(), qty))
+            }
+            PmsA003Readout::Count(particle, count) => {
+                Modality::AirQuality(AirQuality::Count(particle.into(), count))
+            }
+        }
     }
 }
 
@@ -67,7 +74,7 @@ where
         })?;
 
         // Check headers and size of the payload
-        if data[0] != 'B' as u8 || data[1] != 'M' as u8 {
+        if data[0] != b'B' || data[1] != b'M' {
             return Err(PiWeatherError::I2CError(
                 "Invalid header received from PmsA003".into(),
             ));

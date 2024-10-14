@@ -9,7 +9,6 @@ use std::thread;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 use tracing::{error, info};
-use tracing_subscriber;
 
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
