@@ -79,6 +79,8 @@ where
             ));
         }
 
+        // TODO : Maybe we can optimize the remaining elements as it does not leverage
+        // packed instructions...
         let checksum = u16::from_be_bytes([data[30], data[31]]);
         let sum: u16 = data[0..30].iter().fold(0u16, |acc, x| acc + (*x as u16));
 
