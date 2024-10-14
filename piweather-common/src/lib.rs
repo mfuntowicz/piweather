@@ -1,6 +1,6 @@
+pub mod errors;
 mod modality;
 mod payload;
-pub mod errors;
 
-pub use modality::{Modality, Temperature, Wind};
+pub use modality::{AirQuality, Modality, Particle, Temperature, Wind};
 pub use payload::Payload;

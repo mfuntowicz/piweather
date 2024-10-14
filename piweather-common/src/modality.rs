@@ -49,12 +49,32 @@ impl Temperature {
     }
 }
 
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum Particle {
+    PM0_3,
+    PM0_5,
+    PM1_0,
+    PM2_5,
+    PM5_0,
+    PM10_0,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum AirQuality {
+    // Expressed in μg/m3
+    Concentration(Particle, u16),
+
+    // Expressed in number of particles in 0.1L of air
+    Count(Particle, u16),
+}
+
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub enum Modality {
     Humidity(f32),
     Pressure(u16),
     Temperature(Temperature),
     Wind(Wind),
+    AirQuality(AirQuality),
 }
 
 #[cfg(test)]
