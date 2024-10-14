@@ -155,15 +155,17 @@ where
     D: I2CDevice + Sized,
     Self: Sized,
 {
+    const NAME: &'static str = "PMSA003";
+
     fn with_i2c_factory(factory: F) -> Result<Self, PiWeatherError> {
         let device = factory.open(PMSA003_I2C_SLAVE_ADDRESS)?;
         Ok(Self { device })
     }
 
-    fn payload(&mut self) -> Result<Option<Payload<12>>, PiWeatherError> {
+    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError> {
         if let Some(readouts) = self.read()? {
             let modalities = readouts.map(|r| Modality::from(r));
-            return Ok(Some(Payload::now(modalities)));
+            return Ok(Some(Payload::now(&modalities)));
         }
 
         Ok(None)
