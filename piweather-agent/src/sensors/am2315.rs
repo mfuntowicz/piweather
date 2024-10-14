@@ -2,7 +2,7 @@ use crate::i2c::I2CDeviceFactory;
 use crate::sensors::Sensor;
 use i2cdev::core::I2CDevice;
 use piweather_common::errors::PiWeatherError;
-use piweather_common::{Modality, Payload, Temperature};
+use piweather_common::{Modality, Temperature};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 use tracing::debug;
@@ -127,23 +127,25 @@ where
     }
 }
 
-impl<F, D> Sensor<F, D, 2> for Am2315<D>
+impl<D> Sensor<D, 2> for Am2315<D>
 where
-    F: I2CDeviceFactory<Device = D>,
     D: I2CDevice + Sized,
     Self: Sized,
 {
     const NAME: &'static str = "AM2315";
 
-    fn with_i2c_factory(factory: F) -> Result<Self, PiWeatherError> {
+    fn with_i2c_factory<F>(factory: F) -> Result<Self, PiWeatherError>
+    where
+        F: I2CDeviceFactory<Device = D>,
+    {
         let device = factory.open(AM2315_I2C_SLAVE_ADDRESS)?;
         Ok(Am2315::new(device))
     }
 
-    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError> {
+    fn probe(&mut self) -> Result<Option<[Modality; 2]>, PiWeatherError> {
         if let Some(readouts) = self.read()? {
             let modalities = [readouts[0].into(), readouts[1].into()];
-            return Ok(Some(Payload::now(&modalities)));
+            return Ok(Some(modalities));
         }
 
         Ok(None)

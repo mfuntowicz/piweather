@@ -3,20 +3,29 @@ mod pmsa003;
 
 use crate::i2c::I2CDeviceFactory;
 pub use am2315::*;
+use i2cdev::core::I2CDevice;
 use piweather_common::errors::PiWeatherError;
-use piweather_common::Payload;
+use piweather_common::Modality;
 
-pub trait Sensor<T, D, const N: usize>
+pub trait Sensor<D, const N: usize>
 where
-    T: I2CDeviceFactory<Device = D>,
+    D: I2CDevice + Sized,
     Self: Sized,
 {
     const NAME: &'static str;
+    const CARDINALITY: usize = N;
+
+    #[inline]
+    fn name(&self) -> &'static str {
+        const { Self::NAME }
+    }
 
     ///
-    fn with_i2c_factory(factory: T) -> Result<Self, PiWeatherError>;
+    fn with_i2c_factory<F>(factory: F) -> Result<Self, PiWeatherError>
+    where
+        F: I2CDeviceFactory<Device = D>;
 
     ///
     ///
-    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError>;
+    fn probe(&mut self) -> Result<Option<[Modality; N]>, PiWeatherError>;
 }

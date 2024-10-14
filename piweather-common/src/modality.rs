@@ -1,4 +1,10 @@
-use serde::{Deserialize, Serialize};
+use serde::de::{SeqAccess, Visitor};
+use serde::ser::SerializeTuple;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::fmt::Formatter;
+use std::marker::PhantomData;
+use std::mem;
+use std::mem::MaybeUninit;
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub enum Wind {
@@ -75,6 +81,68 @@ pub enum Modality {
     Temperature(Temperature),
     Wind(Wind),
     AirQuality(AirQuality),
+}
+
+#[derive(Debug)]
+pub struct ModalityArray<const N: usize>(pub [Modality; N]);
+impl<const N: usize> Serialize for ModalityArray<N> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_tuple(N)?;
+        for modality in self.0 {
+            seq.serialize_element(&modality)?;
+        }
+
+        seq.end()
+    }
+}
+
+struct ArrayVisitor<const N: usize>(PhantomData<fn() -> Modality>);
+impl<'de, const N: usize> Visitor<'de> for ArrayVisitor<N> {
+    type Value = ModalityArray<N>;
+
+    fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
+        formatter.write_str(&format!("array of length {}", N))
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        let mut data = [const { MaybeUninit::<Modality>::uninit() }; N];
+        for i in 0..N {
+            match seq.next_element()? {
+                Some(val) => data[i].write(val),
+                None => return Err(serde::de::Error::invalid_length(N, &self)),
+            };
+        }
+
+        // This is the recommended way for now https://github.com/rust-lang/rust/issues/62875
+        unsafe {
+            let ptr = &data as *const _ as *const ModalityArray<N>;
+            let modalities = ptr.read();
+            mem::forget(data);
+            Ok(modalities)
+        }
+    }
+}
+
+impl<'de, const N: usize> Deserialize<'de> for ModalityArray<N> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_tuple(N, ArrayVisitor::<N>(PhantomData))
+    }
+
+    // fn deserialize_in_place<D>(deserializer: D, place: &mut Self) -> Result<(), D::Error>
+    // where
+    //     D: Deserializer<'de>,
+    // {
+    //     deserializer.deserialize_tuple_structN, ArrayVisitor::<N>(PhantomData))
+    // }
 }
 
 #[cfg(test)]

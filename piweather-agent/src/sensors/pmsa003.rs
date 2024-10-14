@@ -2,7 +2,7 @@ use crate::i2c::I2CDeviceFactory;
 use crate::sensors::Sensor;
 use i2cdev::core::I2CDevice;
 use piweather_common::errors::PiWeatherError;
-use piweather_common::{Modality, Particle, Payload};
+use piweather_common::{Modality, Particle};
 
 const PMSA003_I2C_SLAVE_ADDRESS: u16 = 0x12;
 
@@ -149,23 +149,25 @@ where
     }
 }
 
-impl<F, D> Sensor<F, D, 12> for PmsA003<D>
+impl<D> Sensor<D, 12> for PmsA003<D>
 where
-    F: I2CDeviceFactory<Device = D>,
     D: I2CDevice + Sized,
     Self: Sized,
 {
     const NAME: &'static str = "PMSA003";
 
-    fn with_i2c_factory(factory: F) -> Result<Self, PiWeatherError> {
+    fn with_i2c_factory<F>(factory: F) -> Result<Self, PiWeatherError>
+    where
+        F: I2CDeviceFactory<Device = D>,
+    {
         let device = factory.open(PMSA003_I2C_SLAVE_ADDRESS)?;
         Ok(Self { device })
     }
 
-    fn payload(&mut self) -> Result<Option<Payload>, PiWeatherError> {
+    fn probe(&mut self) -> Result<Option<[Modality; 12]>, PiWeatherError> {
         if let Some(readouts) = self.read()? {
-            let modalities = readouts.map(|r| Modality::from(r));
-            return Ok(Some(Payload::now(&modalities)));
+            let modalities = readouts.map(Modality::from);
+            return Ok(Some(modalities));
         }
 
         Ok(None)
