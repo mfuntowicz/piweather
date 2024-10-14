@@ -1,4 +1,5 @@
 mod am2315;
+mod pmsa003;
 
 use crate::i2c::I2CDeviceFactory;
 pub use am2315::*;

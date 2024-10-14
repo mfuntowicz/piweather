@@ -7,7 +7,7 @@ use std::thread::sleep;
 use std::time::{Duration, Instant};
 use tracing::debug;
 
-const AM2315_I2C_SLAVE_ADDRESS: u8 = 0x5C;
+const AM2315_I2C_SLAVE_ADDRESS: u16 = 0x5C;
 const AM2315_I2C_READ_FUNC_CODE: u8 = 0x03;
 const AM2315_I2C_READ_CALL: [u8; 3] = [AM2315_I2C_READ_FUNC_CODE, 0x0, 0x4];
 const AM2315_WAKEUP_TIME_MS: Duration = Duration::from_millis(100);
@@ -134,7 +134,7 @@ where
     Self: Sized,
 {
     fn with_i2c_factory(factory: F) -> Result<Self, PiWeatherError> {
-        let device = factory.open(AM2315_I2C_SLAVE_ADDRESS as u16)?;
+        let device = factory.open(AM2315_I2C_SLAVE_ADDRESS)?;
         Ok(Am2315::new(device))
     }
 
